@@ -53,6 +53,8 @@ class CMSPlugin(MpttPublisher):
     lft = models.PositiveIntegerField(db_index=True, editable=False)
     rght = models.PositiveIntegerField(db_index=True, editable=False)
     tree_id = models.PositiveIntegerField(db_index=True, editable=False)
+    
+    template = models.CharField(_("template"), blank=True, null=True, max_length=128, editable=False)
         
     class Meta:
         app_label = 'cms'

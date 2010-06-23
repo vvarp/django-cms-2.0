@@ -159,6 +159,13 @@ CMS_TEMPLATES = (
     ('nav_playground.html', gettext('navigation examples')),
 )
 
+CMS_PLUGIN_TEMPLATES = {
+    'PicturePlugin': [
+        (None, 'Default'),
+        ('plugins/picture/var1.html', 'Picture - Red border'),
+        ('plugins/picture/var2.html', 'Picture - Grey border'),
+    ],
+}
 
 
 CMS_PLACEHOLDER_CONF = {

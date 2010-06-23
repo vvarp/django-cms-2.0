@@ -1,6 +1,7 @@
 from cms.models import CMSPlugin
 from cms.exceptions import SubClassNeededError
 from django.conf import settings
+from django import forms
 from django.forms.models import ModelForm
 from django.utils.encoding import smart_str
 from django.contrib import admin
@@ -111,7 +112,18 @@ class CMSPluginBase(admin.ModelAdmin):
         self.cms_plugin_instance = None
         self.placeholder = None
         self.page = None
+    
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(CMSPluginBase, self).get_form(request, obj, **kwargs)
+        
+        # get available plugin templates for current plugin type
+        plugin_templates = getattr(settings, "CMS_PLUGIN_TEMPLATES", {}).get(self.value, None)
+        if plugin_templates:
+            form.base_fields["template"] = forms.ChoiceField(
+                choices = plugin_templates, initial = getattr(self.cms_plugin_instance, "template") )
 
+        return form
+        
     def render(self, context, instance, placeholder):
         raise NotImplementedError, "render needs to be implemented"
     
@@ -162,6 +174,9 @@ class CMSPluginBase(admin.ModelAdmin):
                 # subclassing cms_plugin_instance (one to one relation)
                 value = getattr(self.cms_plugin_instance, field.name)
                 setattr(obj, field.name, value)
+        
+        # FIXME: including "template" field value in cms_plugin_instance could make more sense
+        setattr(obj, "template", request.POST.get("template", None))
         
         # remember the saved object
         self.saved_object = obj
