@@ -158,6 +158,8 @@ class CMSPlugin(MpttPublisher):
                     raise ValidationError("plugin has no render_template: %s" % plugin.__class__)
             else:
                 template = None
+            if self.template and self.template != "None": # FIXME: huh?
+                template = self.template
             renderer = PluginRenderer(context, instance, placeholder, template, processors)
             return renderer.content
         return ""
